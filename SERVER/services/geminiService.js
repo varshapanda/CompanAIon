@@ -20,8 +20,9 @@ const availableFunctions = {
   getCareerStats: getCareerStats
 };
 
-// UPDATED one-shot example with function_calls demonstration
-const oneShotExample = `
+// MULTI-SHOT EXAMPLES for prompting
+const multiShotExample = `
+
 EXAMPLE 1 - Without function calls:
 USER INPUT:
 - Education: Computer Science student
@@ -85,13 +86,43 @@ AI RESPONSE:
     {"name": "getCareerStats", "parameters": {"careerPath": "Data Scientist"}}
   ]
 }
+
+EXAMPLE 3 - Another user scenario:
+USER INPUT:
+- Education: 3rd year Software Engineering
+- Interests: Cybersecurity, Cloud Computing
+- Goals: Become a cloud security engineer
+AI RESPONSE:
+{
+  "career_paths": [
+    {"title": "Cloud Security Engineer", "description": "Secure cloud infrastructure and services"},
+    {"title": "Cybersecurity Analyst", "description": "Protect systems against cyber threats"},
+    {"title": "DevOps Engineer", "description": "Manage CI/CD pipelines and cloud deployments"}
+  ],
+  "skills_to_learn": [
+    {"skill": "AWS Security", "importance": "High"},
+    {"skill": "Network Security", "importance": "High"},
+    {"skill": "Python", "importance": "Medium"},
+    {"skill": "Linux Administration", "importance": "Medium"},
+    {"skill": "Docker & Kubernetes", "importance": "Medium"}
+  ],
+  "recommended_courses": [
+    {"title": "AWS Security Fundamentals", "platform": "Coursera", "url": "https://www.coursera.org/learn/aws-security-fundamentals"},
+    {"title": "Cybersecurity Bootcamp", "platform": "Udemy", "url": "https://www.udemy.com/course/cybersecurity-bootcamp/"},
+    {"title": "Linux for Developers", "platform": "edX", "url": "https://www.edx.org/course/linux-for-developers"}
+  ],
+  "job_roles": [
+    {"role": "Cloud Security Intern", "companies": ["CloudSecure", "TechGuard", "SafeNet"]},
+    {"role": "Junior Cybersecurity Analyst", "companies": ["SecureIT", "CyberSolutions", "NetProtect"]}
+  ]
+}
 `;
 
 async function generateCareerRecommendation(userData) {
   const { education, interests, goals } = userData;
   
   // COMBINED PROMPT: One-shot examples + function calling instructions
-  const prompt = `${oneShotExample}
+  const prompt = `${multiShotExample}
 
 Now analyze this new user and provide career recommendations:
 
@@ -116,7 +147,7 @@ Return the response as a valid JSON object with the exact same structure as the 
   try {
     const result = await model.generateContent(prompt);
     const response = await result.response;
-    const text = response.text();
+    const text = await response.text();
     
     console.log("Raw Gemini response:", text); // Debugging
     
@@ -151,7 +182,7 @@ Please enhance the original recommendations with this new data. Keep the same JS
 
             const enhancedResult = await model.generateContent(enhancementPrompt);
             const enhancedResponse = await enhancedResult.response;
-            const enhancedText = enhancedResponse.text();
+            const enhancedText = await enhancedResponse.text();
             
             console.log("Enhanced response:", enhancedText); // Debugging
             
