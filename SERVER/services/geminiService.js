@@ -1,5 +1,5 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-const { getCourses, getJobs, getCareerStats } = require('./externalDataService');
+const { getCourses, getJobs, getCareerStats } = require('./externalDataService.js');
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
